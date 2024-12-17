@@ -19,7 +19,7 @@ export class UserController {
         return this.userRepository.findOne({where: {id: createdUser.id}, relations:["storeProfile"]})
     }
     async update(req: any) {
-        const {id, storeProfile, expertProfile, userHasRole, ...user } = req
+        const {id, storeProfile, expertProfile, userHasRole, lostPass, ...user } = req
         if (!id) {
             return "id inválida"
         }
