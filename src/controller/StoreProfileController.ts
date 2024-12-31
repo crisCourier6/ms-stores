@@ -36,6 +36,7 @@ export class StoreProfileController {
         const { s, f } = req.query
         const withUser = req.query.wu === "true"
         const withCatalogue = req.query.wc === "true"
+        const onlyActive = req.query.onlyactive === "true"
         const relations = []
         if (withUser){
             relations.push("user")
@@ -49,11 +50,20 @@ export class StoreProfileController {
                 res.status(400)
                 return { message: 'Parámetro inválido.' }
             }
-            const storeHasFoods = await this.storeProfileRepository.find({
-                where: {id: s},
-                relations: relations
-            })
-            return storeHasFoods
+            const queryBuilder = this.storeProfileRepository.createQueryBuilder("store");
+
+            if (onlyActive) {
+                queryBuilder.leftJoinAndSelect("store.user", "user")
+                            .where("user.isActive = :isActive", { isActive: true });
+            }
+
+            const storeHasFoods = await queryBuilder
+                .leftJoinAndSelect("store.storeHasFood", "storeHasFood")
+                .leftJoinAndSelect("storeHasFood.foodLocal", "foodLocal")
+                .where("store.id = :storeId", { storeId: s })
+                .getMany();
+
+            return storeHasFoods;
         }
 
         if (f) {
@@ -62,12 +72,18 @@ export class StoreProfileController {
                 res.status(400);
                 return { message: 'Parámetro inválido.' };
             }
-            // Find stores that have the specific foodLocalId in storeHasFood
-            const storesWithFood = await this.storeProfileRepository.createQueryBuilder("store")
+            const queryBuilder = this.storeProfileRepository.createQueryBuilder("store")
                 .leftJoinAndSelect("store.storeHasFood", "storeHasFood")
                 .leftJoinAndSelect("storeHasFood.foodLocal", "foodLocal")
-                .leftJoinAndSelect("store.user", "user")
-                // Filter stores that have at least one matching storeHasFood with the given foodLocalId
+                .leftJoinAndSelect("store.user", "user");
+
+            // If onlyActive is true, filter stores by active users
+            if (onlyActive) {
+                queryBuilder.where("user.isActive = :isActive", { isActive: true });
+            }
+
+            // Filter stores that have at least one matching storeHasFood with the given foodLocalId
+            const storesWithFood = await queryBuilder
                 .where(qb => {
                     const subQuery = qb.subQuery()
                         .select("storeHasFood.storeId")
@@ -82,7 +98,17 @@ export class StoreProfileController {
             return storesWithFood;
         }
 
-        return this.storeProfileRepository.find({relations: relations})
+        const queryBuilder = this.storeProfileRepository.createQueryBuilder("store");
+
+        if (onlyActive) {
+            queryBuilder.leftJoinAndSelect("store.user", "user")
+                        .where("user.isActive = :isActive", { isActive: true });
+        }
+
+        return queryBuilder
+            .leftJoinAndSelect("store.storeHasFood", "storeHasFood")
+            .leftJoinAndSelect("storeHasFood.foodLocal", "foodLocal")
+            .getMany();
     }
 
 
