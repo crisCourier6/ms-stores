@@ -1,14 +1,11 @@
 import { AppDataSource } from "../data-source"
-import { NextFunction, Request, Response } from "express"
-import { User } from "../entity/User";
+import { Request, Response } from "express"
 import { StoreProfile } from "../entity/StoreProfile";
-import { v4 as uuidv4, v6 as uuidv6 } from 'uuid';
 import "dotenv/config"
-import axios from "axios"
 
 export class StoreProfileController {
 
-    private storeProfileRepository = AppDataSource.getRepository(StoreProfile)
+    private readonly storeProfileRepository = AppDataSource.getRepository(StoreProfile)
 
     async create(req: any) {
         const createdStoreProfile = await this.storeProfileRepository.save(req)

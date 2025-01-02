@@ -1,14 +1,10 @@
 import { AppDataSource } from "../data-source"
-import { NextFunction, Request, Response } from "express"
-import { User } from "../entity/User";
 import { FoodLocal } from "../entity/FoodLocal";
-import { v4 as uuidv4, v6 as uuidv6 } from 'uuid';
 import "dotenv/config"
-import axios from "axios"
 
 export class FoodLocalController {
 
-    private foodLocalRepository = AppDataSource.getRepository(FoodLocal)
+    private readonly foodLocalRepository = AppDataSource.getRepository(FoodLocal)
 
     async create(req: any) {
         const createdFoodLocal = await this.foodLocalRepository.save(req)

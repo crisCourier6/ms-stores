@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany, ManyToOne, JoinColumn, PrimaryColumn } from "typeorm"
+import { Entity, Column, ManyToOne, JoinColumn, PrimaryColumn } from "typeorm"
 import { StoreProfile } from "./StoreProfile"
 import { FoodLocal } from "./FoodLocal"
 

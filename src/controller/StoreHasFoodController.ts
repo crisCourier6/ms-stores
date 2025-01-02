@@ -1,11 +1,10 @@
 import { AppDataSource } from "../data-source"
 import { NextFunction, Request, Response } from "express"
 import { StoreHasFood } from "../entity/StoreHasFood"
-import axios from "axios"
 
 export class StoreHasFoodController {
 
-    private storeHasFoodRepository = AppDataSource.getRepository(StoreHasFood)
+    private readonly storeHasFoodRepository = AppDataSource.getRepository(StoreHasFood)
 
     async all(req:Request, res: Response) {
         const { s, f } = req.query

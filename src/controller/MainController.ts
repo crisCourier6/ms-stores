@@ -1,15 +1,13 @@
 import { NextFunction, Request, Response } from "express"
 import { Channel } from "amqplib"
-import { StoreHasFood } from "../entity/StoreHasFood"
-import axios from "axios"
 import "dotenv/config"
 import { StoreHasFoodController } from "./StoreHasFoodController"
 import { StoreProfileController } from "./StoreProfileController"
 
 export class MainController{
 
-    private storeHasFoodController = new StoreHasFoodController
-    private storeProfileController = new StoreProfileController
+    private readonly storeHasFoodController = new StoreHasFoodController
+    private readonly storeProfileController = new StoreProfileController
     // user rates expert
 
     // storeHasFoodAll() retorna todos los diarios alimenticios
